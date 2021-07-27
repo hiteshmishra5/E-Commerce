@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load cart %}
+{% load custom_filter %}
+
+<!--This is for categories-->
+
+<div class="container-fluid mt-3">
+    <div class="row">
+    
+        <div class="col-lg-2 mx-auto">
+
+        <form action = '/search' method = 'GET'>
+        <div class="input-group mb-3">
+        <input type="text" name = 'search' class="form-control" placeholder="Search">
+        <div class="input-group-append">
+        <button type =  "submit" class="btn btn-success">Go</button>
+        </div>
+        </div>
+        </form>
+        
+       
+      <div class="list-group">
+         <a href = '/index' style = 'text-decoration:none;'>
+         <div class = 'list-group-item bg-primary btn-sm form-control border rounded py-2' data-toggle="tooltips", title = 'Show All Products'>
+         <img src = '/static/all.png' style = 'width: 14%;'> All Products</div></a>
+          {% for category in categorys %}
+             <a href="/?category= {{category.id}}"
+                class="list-group-item btn-warning btn-sm mt-2">
+                 <img src = "{{category.logo.url}}" style ="width:14%;"> {{category.name}}</a>
+                {% endfor %}
+            </div>
+        </div>
+    
+        
+         
+<!--This is for products-->
+<div id = 'products' class="col-lg-10 mx-auto">
+    <div class = 'row mx-auto'>
+    {% for products in product %}
+        <div class="column mx-auto mb-3" id = {{products.id}} style="width: 14rem;">
+            <img class="card-img-top" src="{{products.image.url}}">
+                <div class="cart-body">
+                    <p class="card-title">{{products.name}}</p>
+                    <div class = 'row'>
+
+                    <div class = 'col'>
+                    <p class="card-text"><b>{{products.sale_price|currency}}</b></p>
+                    </div>
+
+                    <div class = 'col'>
+                    <small><p class="card-text" style = 'text-decoration: line-through;'>{{products.price|currency}}</p></small>
+                    </div>
+                    
+                    <div class = 'col'>
+                    <small><P class = 'badge bg-success mx-1'>{{products.saving}}%</p></small>
+                    </div>
+
+                    </div>
+                    
+                    <hr>
+                     
+                    {% if products|is_in_cart:request.session.cart %}
+                    
+                     <div class = "row no-gutters">
+
+                     <form action = '/#{{products.id}}' class = 'col-2 mx-3' method = 'POST'>
+                    {% csrf_token %}
+                    <input  hidden type ="text" name = 'product' value = '{{products.id}}'>
+                     <input  hidden type ="text" name = 'remove' value = 'True'>
+                     <input type = 'submit' value = ' - ' class = 'btn btn-info btn-sm mt-1'>
+                     </form>
+
+                    <div class = 'text-center col p-1 mt-1'>{{products|cart_quantity:request.session.cart}} in Cart</div>
+
+                    <form action = '/#{{products.id}}' class = 'col-2 mx-3 mr-3' method = 'POST'>
+                    {% csrf_token %}
+                    <input  hidden type ="text" name = 'product' value = '{{products.id}}'>
+                     <input type = 'submit' value = ' + ' class = 'btn btn-info btn-sm mt-1'>
+                     </form>
+
+                      </div>
+
+                        {% comment %} #if is_in_cart return false {% endcomment %}
+
+                    {% else %}
+                        <form action = '/#{{products.id}}' method = 'POST'> 
+                        {% csrf_token %} 
+                         <input  hidden type ="text" name = 'product' value = '{{products.id}}'>
+                         <div class = 'text-center'>
+                         <input type = 'submit' value = 'Add To Cart' class="btn btn-warning btn-sm mx-5 mt-1">
+                        </div>
+                        
+                        </form>
+                     {% endif %}
+
+                </div>
+            </div>
+            {% endfor %} 
+         </div>
+    </div>
+   </div>
+</div>
+ 
+
+{% endblock %}
+
+

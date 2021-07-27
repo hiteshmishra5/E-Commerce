@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content%}
+{% load cart %}
+{% load custom_filter %}
+<div class = 'container'>
+<div class = 'border rounded p-4 m-4 bg-light'>
+<p class = 'display-3 rounded-pill px-3'>Your Cart:<img src = 'static/cart.png' style = 'width: 9%;'></p>
+<hr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>sno.</th>
+            <th>Image</th>
+            <th>product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    {% for product in products %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td><img  style ='height: 40px;' src = "{{product.image.url}}"></td>
+            <td>{{product.name}}</td>
+            <td>{{product.sale_price|currency}}</td>
+            <td>{{product|cart_quantity:request.session.cart}}</td>
+            <td>{{product|price_total:request.session.cart|currency}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+
+    <tfoot>
+    <tr>
+    <th colspan = '4'></th>
+    <th>Total:</th>
+    <th>{{products|total_cart_price:request.session.cart|currency}}</th>
+    </tr>
+    </tfoot>
+</table>
+  
+</div>
+</div>
+
+
+<div class = 'text-center'>
+{% if not request.session.customer %}
+<a href = "/login" class = 'btn btn-info border rounded bg-light'>Continue to Checkout</a>
+{% else %}
+<a href = "#" data-toggle="modal" data-target="#exampleModal"
+class = 'btn btn-info border rounded bg-light'>Continue to Checkout</a>
+{% endif %}
+</div>
+
+ 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Check Out</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+       <div class="modal-body">
+       <div class = 'm-2 p-3'>
+       <form action = '/check-out' method = 'POST'>
+       {% csrf_token %}  
+
+       <div class="form-group">
+         <label>Phone</label>
+         <input type = "text" name="phone"  class="form-control" placeholder=""">
+       </div>
+       
+       <div class="form-group">
+         <label>Address</label>
+         <input type = "text" name="address"  class="form-control" placeholder=""">
+       </div>
+       
+       <input type = 'submit' value = 'Check Out' class = 'btn btn-outline-info mt-3'>
+
+       </form>
+       </div>
+      </div>
+       
+    </div>
+  </div>
+</div>
+
+{% endblock %}

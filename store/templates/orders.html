@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content%}
+{% load cart %}
+{% load custom_filter %}
+<div class = 'container'>
+<div class = 'border rounded p-4 m-4'>
+<p class = 'display-3 rounded-pill bg-success px-3 py-3'>Your Orders :<img src = 'static/orders.png' style = 'width: 70px;'></p>
+<hr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>sno.</th>
+            <th>Image</th>
+            <th>Product</th>
+            <th>Date</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    {% for orders in order %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td><img  style ='height: 40px;' src = "{{orders.product.image.url}}"></td>
+            <td>{{orders.product.name}}</td>
+            <td>{{orders.date}}</td>
+            <td>{{orders.price|currency}}</td>
+            <td>{{orders.quantity}}</td>
+            <td>{{orders.quantity|multiply:orders.price|currency}}</td>
+
+            {% if orders.status %}
+            <td><small><h3 class = 'badge bg-success py-1'>Completed</h3></small></td>
+            {%else%}
+            <td><small><h3 class = 'badge bg-warning py-1'>Pending</h3></small></td>
+            {%endif%}
+             
+ 
+        </tr>
+    {% endfor %}
+    </tbody>
+   
+</table>
+</div>
+</div>
+
+
+{% endblock %}
